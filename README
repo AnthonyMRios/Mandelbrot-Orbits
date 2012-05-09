@@ -1,0 +1,8 @@
+Description
+-------------------------------------------------------------------------------
+This javascript app generates a visual of the Mandelbrot set. It also alows
+the user to click points on the set to display the Mandelbrot Orbit given that
+point.
+
+For information on how it works you can read:
+http://en.wikipedia.org/wiki/Mandelbrot_set

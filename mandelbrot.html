@@ -1,0 +1,150 @@
+<html>
+<head>
+<script type="text/javascript">
+var canvas;
+var ctx;
+var canvas2;
+var ctx2;
+var imgHeight = 500;
+var imgWidth = 500;
+var minReal = -2.0;
+var maxReal = 1.0;
+var minImag = -1.2;
+
+function draw()	{
+	canvas = document.getElementById("mand");
+	ctx = canvas.getContext("2d");
+	canvas2 = document.getElementById("ontop");
+	ctx2 = canvas2.getContext("2d");
+	canvas2.addEventListener('click',onClick,false);
+
+	var maxImag = minImag+(maxReal-minReal)*imgHeight/imgWidth;
+	var realFac = (maxReal-minReal)/(imgWidth-1);
+	var imagFac = (maxImag-minImag)/(imgHeight-1);
+	var iters = 255;
+	var axisy = Math.floor((0-maxImag)/(-imagFac));
+	var axisx = Math.floor((0-minReal)/realFac);
+	
+	var y;
+	for(y = 0; y < imgHeight; y++)
+	{
+		var cImag = maxImag - y*imagFac;
+		var x;
+		for(x = 0;x < imgWidth; x++)
+		{
+			var cReal = minReal + x*realFac;
+			var zReal = cReal;
+			var zImag = cImag;
+			var inside = true;
+			var n;
+			for(n = 0;n < iters; n++)
+			{
+				var zReal2 = zReal*zReal;
+				var zImag2 = zImag*zImag;
+				if(zReal2+zImag2 > 4)
+				{
+					inside = false;
+					break;
+				}
+				zImag = 2*zReal*zImag + cImag;
+				zReal = zReal2 - zImag2 + cReal;
+			}
+			if(inside)
+			{
+				ctx.fillStyle = "#000000";
+				ctx.fillRect(x,y,1,1);
+			}
+			else
+			{
+				ctx.fillStyle = "rgb("+(0+n*10)+",0,0)";
+				ctx.fillRect(x,y,1,1);
+			}
+		}
+	}
+	ctx.beginPath();
+	ctx.moveTo(0,axisy);
+	ctx.lineTo(500,axisy);
+	ctx.moveTo(axisx,0);
+	ctx.lineTo(axisx,imgHeight);
+	ctx.strokeStyle = "#dddddd";
+	ctx.stroke();
+}
+
+function onClick(e)	{
+	var x;
+	var y;
+	if (e.pageX || e.pageY) { 
+		x = e.pageX;
+		y = e.pageY;
+	}
+	else { 
+		x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft; 
+		y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop; 
+	} 
+	x -= canvas.offsetLeft;
+	y -= canvas.offsetTop;
+
+	ctx2.clearRect(0,0,500,500);
+
+	var maxImag = minImag+(maxReal-minReal)*imgHeight/imgWidth;
+	var realFac = (maxReal-minReal)/(imgWidth-1);
+	var imagFac = (maxImag-minImag)/(imgHeight-1);
+	var cImag = maxImag - y*imagFac;
+	var cReal = minReal + x*realFac;
+	var zReal = cReal;
+	var zImag = cImag;
+	var zReal2 = zReal*zReal;
+	var zImag2 = zImag*zImag;
+	var iters = 0;
+	ctx2.beginPath();
+	ctx2.arc(x,y,3,0,2*Math.PI,false);
+	ctx2.fillStyle = "#00FF00";
+	ctx2.fill();
+
+	ctx2.beginPath();
+	ctx2.moveTo(x,y);
+	var xx;
+	var yy;
+	while(((zReal+zImag)!=(zReal2+zImag2)) && ++iters < 500)
+	{
+		zImag = 2*zReal*zImag + cImag;
+		zReal = zReal2 - zImag2 + cReal;
+		xx = Math.floor((zReal-minReal)/realFac); 
+		yy = Math.floor((zImag-maxImag)/(-imagFac)); 
+		ctx2.lineTo(xx,yy);
+		//ctx.font = "20pt Calibri";
+		//ctx.fillStyle = "#ffff00";
+		//ctx.fillText(axisy,100,100);
+		zReal2 = zReal*zReal;
+		zImag2 = zImag*zImag;
+	}
+	ctx2.font = "20pt Calibri";
+	ctx2.fillStyle = "#ffff00";
+	var temp = "HERE: " + iters; 
+	//ctx.fillText(temp,50,50);
+
+	ctx2.strokeStyle = "#ffffff";
+	ctx2.lineWidth = 1;
+	ctx2.stroke();
+
+	ctx2.beginPath();
+	ctx2.arc(xx,yy,3,0,2*Math.PI,false);
+	ctx2.fillStyle = "#FF0000";
+	ctx2.fill();
+}
+</script>
+<title></title>
+</head>
+<body onload="draw()">
+<canvas id="mand" height="500" width="500" style="position: absolute; left: 0; top: 0; z-index: 1;">
+<p>Browser Not Supported!</p>
+</canvas>
+<canvas id="ontop" height="500" width="500" style="position: absolute; left: 0;top: 0; z-index: 2;">
+<p>Browser Not Supported!</p>
+</canvas>
+</body>
+</html>
+
+</body>
+</html>
+
